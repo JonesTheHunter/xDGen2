@@ -39,6 +39,8 @@
             copySelect = new Button();
             copyAll = new Button();
             chkDarkMode = new CheckBox();
+            label4 = new Label();
+            WarningText = new Label();
             SuspendLayout();
             // 
             // btnGen
@@ -68,23 +70,25 @@
             lstNames.Location = new Point(12, 27);
             lstNames.Name = "lstNames";
             lstNames.SelectionMode = SelectionMode.MultiExtended;
-            lstNames.Size = new Size(120, 169);
+            lstNames.Size = new Size(120, 184);
             lstNames.TabIndex = 2;
             lstNames.KeyDown += lstNames_KeyDown;
             // 
             // numCodes
             // 
-            numCodes.Location = new Point(220, 101);
+            numCodes.Location = new Point(221, 107);
             numCodes.Name = "numCodes";
             numCodes.Size = new Size(100, 23);
             numCodes.TabIndex = 2;
             numCodes.Text = "1";
             numCodes.TextAlign = HorizontalAlignment.Right;
+            numCodes.TextChanged += numCodes_TextChanged;
+            numCodes.KeyPress += numCodes_KeyPress;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(138, 104);
+            label2.Location = new Point(139, 110);
             label2.Name = "label2";
             label2.Size = new Size(76, 15);
             label2.TabIndex = 4;
@@ -93,7 +97,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(138, 57);
+            label3.Location = new Point(139, 59);
             label3.Name = "label3";
             label3.Size = new Size(54, 15);
             label3.TabIndex = 5;
@@ -101,12 +105,15 @@
             // 
             // prefixCodes
             // 
-            prefixCodes.Location = new Point(220, 54);
+            prefixCodes.Location = new Point(221, 51);
+            prefixCodes.MaxLength = 10;
             prefixCodes.Name = "prefixCodes";
             prefixCodes.Size = new Size(100, 23);
             prefixCodes.TabIndex = 6;
             prefixCodes.Text = "0";
             prefixCodes.TextAlign = HorizontalAlignment.Right;
+            prefixCodes.TextChanged += prefixCodes_TextChanged;
+            prefixCodes.KeyPress += prefixCodes_KeyPress;
             // 
             // copySelect
             // 
@@ -131,19 +138,39 @@
             // chkDarkMode
             // 
             chkDarkMode.AutoSize = true;
-            chkDarkMode.Location = new Point(238, 12);
+            chkDarkMode.Location = new Point(237, 9);
             chkDarkMode.Name = "chkDarkMode";
-            chkDarkMode.Size = new Size(50, 19);
+            chkDarkMode.Size = new Size(84, 19);
             chkDarkMode.TabIndex = 9;
-            chkDarkMode.Text = "Dark";
+            chkDarkMode.Text = "Dark Mode";
             chkDarkMode.UseVisualStyleBackColor = true;
             chkDarkMode.CheckedChanged += chkDarkMode_CheckedChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(168, 82);
+            label4.Name = "label4";
+            label4.Size = new Size(137, 15);
+            label4.TabIndex = 10;
+            label4.Text = "6-10 Digits | 0 = Random";
+            // 
+            // WarningText
+            // 
+            WarningText.AutoSize = true;
+            WarningText.ForeColor = Color.Red;
+            WarningText.Location = new Point(146, 135);
+            WarningText.Name = "WarningText";
+            WarningText.Size = new Size(0, 15);
+            WarningText.TabIndex = 11;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(333, 223);
+            Controls.Add(WarningText);
+            Controls.Add(label4);
             Controls.Add(chkDarkMode);
             Controls.Add(copyAll);
             Controls.Add(copySelect);
@@ -175,5 +202,7 @@
         private Button copySelect;
         private Button copyAll;
         private CheckBox chkDarkMode;
+        private Label label4;
+        private Label WarningText;
     }
 }

@@ -23,6 +23,10 @@ namespace xDGen
                 {
                     c.ForeColor = Color.Black;
                 }
+                if (c is Label label && label.Name == "WarningText")
+                {
+                    c.ForeColor = Color.Yellow;
+                }
             }
         }
 
@@ -30,6 +34,13 @@ namespace xDGen
         {
             this.BackColor = lightForegroundColor;
             this.ForeColor = darkBackgroundColor;
+            foreach (Control c in this.Controls)
+            {
+                if (c is Label label && label.Name == "WarningText")
+                {
+                    c.ForeColor = Color.Red;
+                }
+            }
         }
         public Form1()
         {
@@ -79,63 +90,65 @@ namespace xDGen
             }
         }
 
-        public static List<long> upcGen(string userPrefix, string userNumToGen)
+        public static bool numCheck(KeyPressEventArgs e)
         {
-            int prefix = int.Parse(userPrefix);
-            int numToGen = int.Parse(userNumToGen);
-
-            Random ranNum = new();
-            List<long> codeList = new();
-
-            for (int i = 0; i < numToGen; i++)
+            // Check if the key pressed is a digit or a control character
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
-                int[] genCode = new int[12];
-
-                if (prefix != 0)
-                {
-                    // Convert prefix to string and add to code array
-                    string prefixString = prefix.ToString("D6");
-                    for (int j = 0; j < 6; j++)
-                    {
-                        genCode[j] = int.Parse(prefixString[j].ToString());
-                    }
-                }
-
-                // Generate remaining digits
-                for (int num = prefix != 0 ? 6 : 0; num < 12; num++)
-                {
-                    genCode[num] = ranNum.Next(0, 10);
-                }
-
-                // Check that code has 12 digits
-                long code = long.Parse(string.Join("", genCode));
-                while (code.ToString().Length < 12)
-                {
-                    // Add 1 to last digit and carry over to previous digit
-                    for (int num = 11; num >= 0; num--)
-                    {
-                        if (genCode[num] == 9)
-                        {
-                            genCode[num] = 0;
-                        }
-                        else
-                        {
-                            genCode[num]++;
-                            break;
-                        }
-                    }
-                    code = long.Parse(string.Join("", genCode));
-                }
-
-                codeList.Add(code);
+                e.Handled = true; // Ignore the key press
             }
-            return codeList;
+            return e.Handled;
+        }
+
+        public static List<string> upcGen(string userPrefix, string userNumToGen)
+        {
+            int numToGen = int.Parse(userNumToGen);
+            int digitsLeft = 12 - userPrefix.Length;
+            int maxValue = (int)Math.Pow(10, digitsLeft);
+            int minValue = (int)Math.Pow(10, (digitsLeft - 1));
+            Random rnd = new();
+            string genCode;
+            List<string> CodesList = new List<string>();
+
+
+            if (int.Parse(userPrefix) == 0)
+            {
+                int i = 0;
+                while (i < numToGen)
+                {
+                    long x = rnd.Next(100000, 999999);
+                    long y = rnd.Next(100000, 999999);
+                    genCode = x.ToString() + y.ToString();
+                    if (!CodesList.Contains(genCode))
+                    {
+                        CodesList.Add(genCode);
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                int i = 0;
+                while (i < numToGen)
+                {
+                    long x = rnd.Next(0, maxValue);
+                    string dx = "D" + digitsLeft;
+                    genCode = userPrefix + x.ToString(dx);
+                    if (!CodesList.Contains(genCode))
+                    {
+                        CodesList.Add(genCode);
+                        i++;
+                    }
+                }
+            }
+
+            return CodesList;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             lstNames.Items.Clear();
-            foreach (long code in upcGen(prefixCodes.Text, numCodes.Text))
+            foreach (string code in upcGen(prefixCodes.Text, numCodes.Text))
             {
                 lstNames.Items.Add(code);
             }
@@ -180,6 +193,53 @@ namespace xDGen
             else
             {
                 SetDefaultColors();
+            }
+        }
+
+        private void prefixCodes_TextChanged(object sender, EventArgs e)
+        {
+            int minLength = 6;
+            int maxLength = 10;
+
+            if (string.IsNullOrWhiteSpace(prefixCodes.Text))
+            {
+                btnGen.Enabled = false;
+            }
+
+            if (int.TryParse(prefixCodes.Text, out int number))
+            {
+                if (number == 0 || number >= Math.Pow(10, minLength - 1) && number < Math.Pow(10, maxLength))
+                {
+                    btnGen.Enabled = true;
+                }
+                else
+                {
+                    btnGen.Enabled = false;
+                }
+            }
+        }
+
+        private void prefixCodes_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            numCheck(e);
+        }
+
+        private void numCodes_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            numCheck(e);
+        }
+
+        private void numCodes_TextChanged(object sender, EventArgs e)
+        {
+            if (numCodes.Text.Length >= 5)
+            {
+                WarningText.Location = new Point(155, 135);
+                WarningText.Text = "WARNING: May be unstable.";
+            }
+            else
+            {
+                WarningText.Location = new Point(146, 135);
+                WarningText.Text = "";
             }
         }
     }
