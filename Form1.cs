@@ -106,6 +106,7 @@ namespace xDGen
             int digitsLeft = 12 - userPrefix.Length;
             int maxValue = (int)Math.Pow(10, digitsLeft);
             int minValue = (int)Math.Pow(10, (digitsLeft - 1));
+            int availableSlots = Math.Max(10 - userPrefix.Length, 0);
             Random rnd = new();
             string genCode;
             List<string> CodesList = new List<string>();
@@ -139,6 +140,7 @@ namespace xDGen
                         CodesList.Add(genCode);
                         i++;
                     }
+                    
                 }
             }
 
@@ -231,6 +233,26 @@ namespace xDGen
 
         private void numCodes_TextChanged(object sender, EventArgs e)
         {
+            int digitsLeft = 12 - prefixCodes.Text.Length;
+            int maxValue = (int)Math.Pow(10, digitsLeft);
+
+            if (string.IsNullOrWhiteSpace(numCodes.Text))
+            {
+                btnGen.Enabled = false;
+            }
+            else if (int.Parse(numCodes.Text) <= 0)
+            {
+                btnGen.Enabled = false;
+            }
+            else if (prefixCodes.Text != "0" && numCodes.Text.Length >= maxValue.ToString().Length)
+            {
+                btnGen.Enabled = false; 
+            }
+            else
+            { 
+                btnGen.Enabled = true;
+            }
+
             if (numCodes.Text.Length >= 5)
             {
                 WarningText.Location = new Point(155, 135);
